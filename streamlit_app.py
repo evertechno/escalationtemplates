@@ -1,6 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
-from fpdf import FPDF
+from fpdf2 import FPDF  # Use fpdf2 instead of fpdf
 import zipfile
 import io
 
@@ -65,7 +65,7 @@ if st.button("Generate Single Template PDF"):
         email_content = response.text
         st.write(email_content)
         
-        # Generate PDF of the email content
+        # Generate PDF of the email content using fpdf2 (supports UTF-8)
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
@@ -81,7 +81,7 @@ if st.button("Generate Single Template PDF"):
         pdf.multi_cell(0, 10, txt=email_content)
         
         # Save PDF to a byte stream
-        pdf_output = pdf.output(dest="S").encode("utf-8")  # Use utf-8 encoding here
+        pdf_output = pdf.output(dest="S").encode("latin-1")  # Using latin-1 here as fallback for standard PDF output
         
         # Add a download button for the generated PDF
         st.download_button(
@@ -111,7 +111,7 @@ if st.button("Download All 30 Templates as ZIP"):
                 response = model.generate_content(prompt)
                 email_content = response.text
                 
-                # Create PDF for this scenario
+                # Create PDF for this scenario using fpdf2 (supports UTF-8)
                 pdf = FPDF()
                 pdf.set_auto_page_break(auto=True, margin=15)
                 pdf.add_page()
@@ -121,7 +121,7 @@ if st.button("Download All 30 Templates as ZIP"):
                 pdf.multi_cell(0, 10, txt=email_content)
                 
                 # Save PDF to a byte stream
-                pdf_output = pdf.output(dest="S").encode("utf-8")  # Use utf-8 encoding here
+                pdf_output = pdf.output(dest="S").encode("latin-1")  # Using latin-1 here as fallback for standard PDF output
                 
                 # Add the PDF to the ZIP file
                 zip_file.writestr(f"email_escalation_{scenario.replace(' ', '_').replace(',', '').lower()}.pdf", pdf_output)

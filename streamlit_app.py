@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+from fpdf import FPDF
 
 # Configure the API key securely from Streamlit's secrets
 # Make sure to add GOOGLE_API_KEY in secrets.toml (for local) or Streamlit Cloud Secrets
@@ -42,7 +43,6 @@ scenarios = [
     "Feedback escalation regarding service",
     "Request for better support resolution"
 ]
-
 selected_scenario = st.selectbox("Select an escalation scenario", scenarios)
 
 # Button to generate the response
@@ -62,12 +62,30 @@ if st.button("Generate Template"):
         email_content = response.text
         st.write(email_content)
         
-        # Add a download button for the generated template
+        # Generate PDF of the email content
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+        
+        # Set font for PDF
+        pdf.set_font("Arial", size=12)
+        
+        # Add title to PDF
+        pdf.cell(200, 10, txt=f"Email Escalation Template: {selected_scenario}", ln=True, align="C")
+        pdf.ln(10)
+        
+        # Add the generated content to the PDF
+        pdf.multi_cell(0, 10, txt=email_content)
+        
+        # Save PDF to a byte stream
+        pdf_output = pdf.output(dest="S").encode("latin1")
+        
+        # Add a download button for the generated PDF
         st.download_button(
-            label="Download Template",
-            data=email_content,
-            file_name=f"email_escalation_{selected_scenario.replace(' ', '_').replace(',', '').lower()}.txt",
-            mime="text/plain"
+            label="Download Template as PDF",
+            data=pdf_output,
+            file_name=f"email_escalation_{selected_scenario.replace(' ', '_').replace(',', '').lower()}.pdf",
+            mime="application/pdf"
         )
     
     except Exception as e:

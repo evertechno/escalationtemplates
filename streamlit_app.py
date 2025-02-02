@@ -12,6 +12,9 @@ genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 st.title("Email Escalation Response Generator")
 st.write("Use Generative AI to create email escalation response templates based on different scenarios.")
 
+# Define the model outside of the button logic to make it accessible throughout the app
+model = genai.GenerativeModel('gemini-1.5-flash')
+
 # Dropdown for selecting a single scenario
 scenarios = [
     "Customer service issue",
@@ -53,9 +56,6 @@ if st.button("Generate Single Template PDF"):
     try:
         # Define a basic prompt structure to guide the AI generation based on the selected scenario
         prompt = f"Generate a professional email escalation response for the following scenario: {selected_scenario}."
-        
-        # Load and configure the model
-        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Generate response from the model
         response = model.generate_content(prompt)

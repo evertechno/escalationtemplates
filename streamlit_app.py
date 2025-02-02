@@ -81,7 +81,7 @@ if st.button("Generate Single Template PDF"):
         pdf.multi_cell(0, 10, txt=email_content)
         
         # Save PDF to a byte stream
-        pdf_output = pdf.output(dest="S").encode("latin1")
+        pdf_output = pdf.output(dest="S").encode("utf-8")  # Use utf-8 encoding here
         
         # Add a download button for the generated PDF
         st.download_button(
@@ -121,7 +121,7 @@ if st.button("Download All 30 Templates as ZIP"):
                 pdf.multi_cell(0, 10, txt=email_content)
                 
                 # Save PDF to a byte stream
-                pdf_output = pdf.output(dest="S").encode("latin1")
+                pdf_output = pdf.output(dest="S").encode("utf-8")  # Use utf-8 encoding here
                 
                 # Add the PDF to the ZIP file
                 zip_file.writestr(f"email_escalation_{scenario.replace(' ', '_').replace(',', '').lower()}.pdf", pdf_output)
